@@ -1,0 +1,9 @@
+.block_label{
+	display: block !important;
+}
+
+.invalid-feedback {
+    color: red !important;
+    display: block;
+    padding-left: 5%;
+}

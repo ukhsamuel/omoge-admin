@@ -1,0 +1,118 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add Product Batch</h4>
+                <h6 class="card-subtitle">Fill the form below</h6>
+			    <div class="col-sm-10">                  
+
+                    <ngb-alert *ngIf="responseMessage" [type]="messageType" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+
+                    <form [formGroup]="dataForm" class="form-horizontal m-t-25" id="signupform" (ngSubmit)="onSubmit()">
+                        <div class="form-group row ">
+                            <div class="col-8">
+	                            <div class="col-12 ">
+			                        <label for="inlineFormCustomSelect">Select Product (required)</label>
+			                        <select formControlName="product_id" [(ngModel)]="inputData.product_id" [ngClass]="{ 'is-invalid': submitted && f.product_id.errors }"  class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+			                            <option selected>Choose product...</option>
+			                            <option *ngFor="let product of products" value="{{product.id}}">{{ product.name }}</option>
+			                        </select>
+	                            </div>
+	                            <div *ngIf="submitted && f.product_id.errors" class="invalid-feedback">
+	                                <div *ngIf="f.product_id.errors.required">product is required</div>
+	                            </div>
+	                        </div>
+                            <div class="col-4">
+                                <div class="col-12 ">
+			                        <label class="block_label" for="d">Quantity (required)</label>
+                                    <input formControlName="quantity" [(ngModel)]="inputData.quantity" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.quantity.errors }" type="number" required=" " placeholder="Input quantity">
+                                </div>
+                                <div *ngIf="submitted && f.quantity.errors" class="invalid-feedback">
+                                    <div *ngIf="f.quantity.errors.required">quantity is required</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+						<div class="form-group row">
+                            <div class="col-6">
+		                        <label class="block_label" for="d">Select Manufacture Date (required)</label>
+								<div class="input-group">
+									<input formControlName="manufacture_date" class="form-control" (click)="d.toggle()" placeholder="yyyy-mm-dd"
+									 name="dp" [ngClass]="{ 'is-invalid': submitted && f.manufacture_date.errors }"  [(ngModel)]="inputData.manufacture_date" ngbDatepicker #d="ngbDatepicker">
+									<div class="input-group-append">
+										<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+									</div>
+								</div>
+                                <div *ngIf="submitted && f.manufacture_date.errors" class="invalid-feedback">
+                                    <div *ngIf="f.manufacture_date.errors.required">manufacture date is required</div>
+                                </div>
+							</div>
+                            <div class="col-6">
+		                        <label class="block_label" for="d2">Select Expiry Date (required)</label>
+								<div class="input-group">
+									<input formControlName="expiry_date" class="form-control" (click)="d2.toggle()" placeholder="yyyy-mm-dd"
+									 name="dp" [ngClass]="{ 'is-invalid': submitted && f.expiry_date.errors }"  [(ngModel)]="inputData.expiry_date" ngbDatepicker #d2="ngbDatepicker">
+									<div class="input-group-append">
+										<button class="btn btn-outline-secondary" (click)="d2.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+									</div>
+								</div>
+                                <div *ngIf="submitted && f.expiry_date.errors" class="invalid-feedback">
+                                    <div *ngIf="f.expiry_date.errors.required">expiry date is required</div>
+                                </div>
+							</div>
+						</div>
+                     <!--    <div class="form-group row ">
+                            <div class="col-6">
+	                            <div class="col-12 ">
+	                                <input formControlName="price" [(ngModel)]="inputData.price" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.price.errors }" type="text" required=" " placeholder="Price (required)">
+	                            </div>
+	                            <div *ngIf="submitted && f.price.errors" class="invalid-feedback">
+	                                <div *ngIf="f.price.errors.required">Price is required</div>
+	                            </div>
+	                        </div>
+                            <div class="col-6">
+	                            <div class="col-12 ">
+	                                <input formControlName="weight" [(ngModel)]="inputData.weight" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.weight.errors }" type="text" required=" " placeholder="Weight (required)">
+	                            </div>
+	                            <div *ngIf="submitted && f.weight.errors" class="invalid-feedback">
+	                                <div *ngIf="f.weight.errors.required">Weight is required</div>
+	                            </div>
+	                        </div>
+                        </div>
+                        <div class="form-group row ">
+                            <div class="col-6">
+                                <div class="col-12 ">
+                                    <input formControlName="sku" [(ngModel)]="inputData.sku" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.sku.errors }" type="text" required=" " placeholder="SKU (required)">
+                                </div>
+                                <div *ngIf="submitted && f.sku.errors" class="invalid-feedback">
+                                    <div *ngIf="f.sku.errors.required">SKU is required</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="col-12 ">
+                                    <input formControlName="fda" [(ngModel)]="inputData.fda" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.fda.errors }" type="text" required=" " placeholder="FDA (required)">
+                                </div>
+                                <div *ngIf="submitted && f.sku.errors" class="invalid-feedback">
+                                    <div *ngIf="f.fda.errors.required">FDA is required</div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="form-group row ">
+                            <div class="col-12 ">
+                            	<textarea formControlName="note" [(ngModel)]="inputData.note" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.note.errors }" placeholder="Notes"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group text-center ">
+                            <div class="col-xs-12 p-b-20 ">
+                                <button class="btn btn-block btn-lg btn-info " [disabled]="processing" type="submit ">                       
+                                        <img *ngIf="processing" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                    ADD PRODUCT
+                                </button>
+                            </div>
+                        </div>
+	                </form>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>

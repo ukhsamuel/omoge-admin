@@ -1,0 +1,148 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add Product</h4>
+                <h6 class="card-subtitle">Fill the form below or upload Sheet</h6>
+                <div class="container" *ngIf="!uploadSuccess" >
+                    <button class="btn btn-success" (click)="csvOn()" *ngIf="!uploadingCSV" type="submit"><i class="mdi mdi-file-excel"></i> Upload Sheet</button>
+                    <button class="btn btn-danger" *ngIf="uploadingCSV" (click)="csvOff()" type="submit">Cancel</button>
+                    <a class="btn btn-warning" download="sample-product-sheet" target="_blank" href="/assets/sample-csv/products.csv">
+                      <i class="mdi mdi-download"></i> Download Sheet Template
+                    </a>
+                    <a *ngIf="messageType && messageType == 'success'" class="btn btn-outline-secondary" style="float: right;" routerLink="/dashboard/products">
+                        View Products
+                    </a>
+                </div>
+                <div class="row col-sm-12" style="margin-top: 20px">
+                    <ngb-alert *ngIf="responseMessage" [type]="messageType" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+                </div>
+			    <div class="col-sm-12">                  
+
+                    
+                    <div *ngIf="uploadingCSV" class="row">
+                        <div class="col-lg-4 offset-lg-3 upload_container" *ngIf="!uploadSuccess">
+                            <form>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload Sheet</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input #fileImportInput name="CSV File Upload" (change)="fileChangeListener($event)" accept=".csv" type="file" class="custom-file-input" id="inputGroupFile01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="table-responsive">
+                            <h6 *ngIf="csvTableData">Selected Sheet (click "upload" button below table to submit)</h6>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" *ngFor="let i of csvTableHeader">{{ i }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let p of csvTableData; let i = index">
+                                        <th *ngFor="let t of p">{{ t }}</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="success-message-div col-12" *ngIf="uploadSuccess">
+                            <i class="mdi mdi-check-circle-outline e0"></i>
+                            <p class="e1">Upload Successful</p>
+                            <button class="btn btn-outline-secondary" (click)="csvOff()" type="submit">Close</button>
+                        </div>
+                        <div class="col-12" *ngIf="csvTableData && csvTableData.length < 1">
+                            <p class="e1">Sheet Empty</p>
+                        </div>
+                        <div class="form-group text-center " *ngIf="csvTableData">
+                            <div class="col-xs-12 p-b-20 ">
+                                <button class="btn btn-block btn-lg btn-success " [disabled]="processing || !csvTableData || csvTableData.length < 1" type="button" (click)="submit_bulk()">                       
+                                        <img *ngIf="processing" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                    UPLOAD
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form *ngIf="!uploadingCSV" [formGroup]="dataForm" class="form-horizontal m-t-25" id="signupform" (ngSubmit)="onSubmit()">
+                        <div class="form-group row ">
+                            <div class="col-12 ">
+                                <input formControlName="name" [(ngModel)]="inputData.name" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" type="text" required=" " placeholder="Name of Product (required)">
+                            </div>
+                            <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                <div *ngIf="f.name.errors.required">Name is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row ">
+                            <div class="col-6">
+	                            <div class="col-12 ">
+	                                <input formControlName="price" [(ngModel)]="inputData.price" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.price.errors }" type="number" required=" " placeholder="Price (required)">
+	                            </div>
+	                            <div *ngIf="submitted && f.price.errors" class="invalid-feedback">
+	                                <div *ngIf="f.price.errors.required">Price is required</div>
+	                            </div>
+	                        </div>
+                            <div class="col-3">
+	                            <div class="col-12 ">
+			                        <select formControlName="unit" [(ngModel)]="inputData.unit" [ngClass]="{ 'is-invalid': submitted && f.unit.errors }"  class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                        <option value="" disabled selected>Select Unit (required)</option>
+			                            <option *ngFor="let unit of unitTypes" value="{{unit.value}}">{{ unit.name }}</option>
+			                        </select>
+	                                <!-- <input formControlName="unit" [(ngModel)]="inputData.unit" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.unit.errors }" type="number" required=" " placeholder="Weight (required)"> -->
+	                            </div>
+	                            <div *ngIf="submitted && f.unit.errors" class="invalid-feedback">
+	                                <div *ngIf="f.unit.errors.required">Unit is required</div>
+	                            </div>
+	                        </div>
+                            <div class="col-3">
+	                            <div class="col-12 ">
+	                                <input formControlName="unit_amount" [(ngModel)]="inputData.unit_amount" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.unit_amount.errors }" type="number" required=" " placeholder="Unit amount (required)">
+	                            </div>
+	                            <div *ngIf="submitted && f.unit_amount.errors" class="invalid-feedback">
+	                                <div *ngIf="f.unit_amount.errors.required">Unit Quantity is required</div>
+	                            </div>
+	                        </div>
+                        </div>
+                        <div class="form-group row ">
+                            <div class="col-6">
+                                <div class="col-12 ">
+                                    <input formControlName="sku" [(ngModel)]="inputData.sku" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.sku.errors }" type="text" required=" " placeholder="SKU (required)">
+                                </div>
+                                <div *ngIf="submitted && f.sku.errors" class="invalid-feedback">
+                                    <div *ngIf="f.sku.errors.required">SKU is required</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="col-12 ">
+                                    <input formControlName="fda" [(ngModel)]="inputData.fda" class="form-control form-control-lg" type="text" placeholder="FDA">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row ">
+                            <div class="col-12 ">
+                            	<textarea formControlName="notes" [(ngModel)]="inputData.notes" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.notes.errors }" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row ">
+                            <div class="col-12 ">
+                                <input formControlName="tags" [(ngModel)]="inputData.tags" class="form-control form-control-lg" type="text" placeholder="tags (comma seperated)">
+                            </div>
+                        </div>
+                        <div class="form-group text-center ">
+                            <div class="col-xs-12 p-b-20 ">
+                                <button class="btn btn-block btn-lg btn-success " [disabled]="processing" type="submit ">                       
+                                        <img *ngIf="processing" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                    ADD PRODUCT
+                                </button>
+                            </div>
+                        </div>
+	                </form>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>

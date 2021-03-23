@@ -1,0 +1,89 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">
+          View All Drivers
+        	<a class="btn btn-outline-secondary" style="float: right;" routerLink="/dashboard/add-driver">
+	            <i class="fa fa-plus"></i> Add
+	        </a>
+		</h4>
+
+        <ngb-alert *ngIf="responseMessage" type="success" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+        <form class="w-50 m-b-30">
+          <input type='text' class="form-control" placeholder='Type to filter' (keyup)='updateFilter($event)' />
+        </form>
+
+			<ngx-datatable #mydatatable class="material" 
+				[headerHeight]="50" 
+        [limit]="20" 
+        [columnMode]="'standard'" 
+        [scrollbarH]="scrollBarHorizontal"
+				[footerHeight]="50" 
+				[rowHeight]="'auto'"
+        [rows]="drivers">
+					<ngx-datatable-column name="Date"  prop="createdAt">
+						<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+							<span>
+								{{value|date}}
+							</span>
+						</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="First Name"  prop="first_name">
+						<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+							<span>
+								{{value}}
+							</span>
+						</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Last Name" prop="last_name">
+							<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+								<span>
+									{{value}}
+								</span>
+							</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Email">
+						<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+							<span>
+								{{value}}
+							</span>
+						</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Phone">
+						<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+							<span>
+								{{value}}
+							</span>
+						</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Activation Status" prop="status">
+							<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+								<span class="status_badge">
+									{{ statusTranslators.activationStatus(value) }}
+								</span>
+							</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Verification Status" prop="verification_status">
+							<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+								<span class="status_badge">
+									{{ statusTranslators.verificationStatus(value) }}
+								</span>
+							</ng-template>
+					</ngx-datatable-column>
+					<ngx-datatable-column name="Actions">
+						<ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+							
+							<button md-icon-button (click)="view(row)">
+										<i class="fa fa-eye"></i>
+								</button>
+							<button md-icon-button (click)="delete(row)">
+										<i class="fa fa-trash-alt"></i>
+								</button>
+						</ng-template>
+					</ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </div>
+  </div>
+</div>

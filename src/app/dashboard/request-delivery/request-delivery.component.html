@@ -1,0 +1,142 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Request Delivery</h4>
+                <h6 class="card-subtitle">Fill the form below to request delivery of your product</h6>
+			    <div class="col-sm-10">                  
+
+                    <ngb-alert *ngIf="responseMessage" [type]="messageType" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+
+                    <form [formGroup]="dataForm" class="form-horizontal m-t-25" id="signupform">
+                        <div class="form-group row">
+                            <div class="col-12 ">
+						        <input [(ngModel)]="inputData.delivery_address" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.delivery_address.errors }"  placeholder="Delivery Address (required)" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search formControlName="delivery_address">
+						    </div>
+                            <div *ngIf="submitted && f.delivery_address.errors" class="invalid-feedback">
+                                <div *ngIf="f.delivery_address.errors.required">Delivery Address is required</div>
+                            </div>
+					    </div>
+                        <div class="col-12 ">
+					      <agm-map *ngIf="latitude" [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
+					        <agm-marker [latitude]="latitude" [longitude]="longitude"></agm-marker>
+					      </agm-map>
+					    </div>
+						<div class="form-group row" *ngIf="latitude">
+							<br>
+						</div>
+						<div class="form-group row">
+                            <div class="col-12 ">
+                                <input formControlName="delivery_phone_no" [(ngModel)]="inputData.delivery_phone_no" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.delivery_phone_no.errors }" type="tel" required=" " placeholder="Delivery phone number (required)">
+                            </div>
+                        </div>
+                       <div class="form-group row">
+						    <div class="col-8 ">
+						        <label for="inlineFormCustomSelect">Select Agent (required)</label>
+						        <select formControlName="agent_id" [(ngModel)]="inputData.agent_id" [ngClass]="{ 'is-invalid': submitted && f.agent_id.errors }" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+						            <option selected>Choose agent...</option>
+						            <option *ngFor="let product of agents" value="{{product.id}}">{{ product.user.name }}</option>
+						        </select>
+						    </div>
+						    <div *ngIf="submitted && f.agent_id.errors" class="invalid-feedback">
+						        <div *ngIf="f.agent_id.errors.required">agent is required</div>
+						    </div>
+						</div>
+	                </form>
+		            <div class="adding_container row">		                
+		                <div class="col-sm-8">
+			                <h4 class="card-title">Add Products</h4>
+			                <h6 class="card-subtitle">select products and batches to be delivered</h6>
+			                <div *ngIf="selectedProducts.length < 1 && submitted">
+			                	<p style="color: red">Please select at least one product</p>
+			                </div>
+		                    <form [formGroup]="dataForm2" class="form-horizontal m-t-25" id="signupform" (ngSubmit)="onSubmit2()">
+		                        <div class="form-group row">
+		                            <div class="col-12 ">
+				                        <label for="inlineFormCustomSelect">Select Product (required)</label>
+				                        <select formControlName="product_id" [(ngModel)]="inputData2.product_id" [ngClass]="{ 'is-invalid': submitted2 && g.product_id.errors }"  (ngModelChange)="loadProductBatches()" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+				                            <option selected>Choose product...</option>
+				                            <option *ngFor="let product of products" value="{{product.id}}">{{ product.name }}</option>
+				                        </select>
+		                            </div>
+		                            <div *ngIf="submitted2 && g.product_id.errors" class="invalid-feedback">
+		                                <div *ngIf="g.product_id.errors.required">product is required</div>
+		                            </div>
+		                        </div>
+		                        <div class="form-group row" >
+		                            <div class="col-12 ">
+				                        <label for="inlineFormCustomSelect">
+					                        Select Product Batch (required)
+					                        	<img *ngIf="loadingBatches" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+					                    </label>
+				                        <select [attr.disabled]="!inputData2.product_id?'':null" formControlName="batch_id" [(ngModel)]="inputData2.batch_id" [ngClass]="{ 'is-invalid': submitted2 && g.batch_id.errors }" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+				                            <option selected>Choose batch...</option>
+				                            <option *ngFor="let batch of productsBatches" value="{{batch.id}}">{{ batch.batch_code }}</option>
+				                        </select>
+		                            </div>
+		                            <div *ngIf="submitted2 && g.batch_id.errors" class="invalid-feedback">
+		                                <div *ngIf="g.batch_id.errors.required">batch id is required</div>
+		                            </div>
+		                        </div>
+		                        <div class="form-group row">
+		                            <div class="col-lg-6 col-xs-12">
+		                                <div class="col-12 ">
+					                        <label class="block_label" for="d">Quantity (required)</label>
+		                                    <input formControlName="quantity" [(ngModel)]="inputData2.quantity" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted2 && g.quantity.errors }" type="number" required=" " placeholder="Input quantity">
+		                                </div>
+		                                <div *ngIf="submitted2 && g.quantity.errors" class="invalid-feedback">
+		                                    <div *ngIf="g.quantity.errors.required">quantity is required</div>
+		                                </div>
+		                            </div>
+		                            <div class="col-lg-6 col-xs-12">
+		                                <div class="col-12 ">
+					                        <label class="block_label" for="d">Per Box (required)</label>
+		                                    <input formControlName="per_box" [(ngModel)]="inputData2.per_box" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted2 && g.per_box.errors }" type="number" required=" " placeholder="products per carton">
+		                                </div>
+		                                <div *ngIf="submitted2 && g.per_box.errors" class="invalid-feedback">
+		                                    <div *ngIf="g.per_box.errors.required">Field is required</div>
+		                                </div>
+		                            </div>
+								</div>
+								<div>
+										<p *ngIf="inputData2.quantity && inputData2.per_box">Boxes: {{ returnNumberOfBoxes(inputData2.quantity,inputData2.per_box) }} </p>
+										<p *ngIf="inputData2.quantity && inputData2.per_box">Rem: {{ returnNumberOfBoxesRemainders(inputData2.quantity,inputData2.per_box) }} </p>
+								</div>
+		                        <div class="form-group text-center ">
+		                            <div class="col-xs-12 p-b-20 ">
+											<button class="btn btn-rounded btn-outline-success" type="submit ">
+												<i class="fas fa-plus"></i> 
+												Add
+											</button>
+		                            </div>
+		                        </div>
+			                </form>
+			            </div>
+			            <div class="col-sm-4">
+			            	<p *ngIf="selectedProducts.length > 0"><b>Selected Products ({{ selectedProducts.length }})</b></p>
+			            	<div class="sel_product_container">
+				                <div class="sel_product" *ngFor="let product of selectedProducts; index as i">
+				                	<h3><span>Product:</span> {{ product.product_name }}</h3>
+				                	<p><span>Batch:</span> {{ product.batch_code }}</p>
+				                	<p><span>Quantity:</span> {{ product.quantity }}</p>
+				                	<p><span>Boxes:</span> {{ product.boxes.length }}</p>
+			                        <button class="btn btn-rounded btn-outline-danger "  type="submit " (click)="removeSelected(i)">remove</button>                       
+				                </div>
+				            </div>
+			            </div>
+		            </div>
+                    <div class="form-group text-center ">
+                    	<br>
+                    	<br>
+                        <div class="col-xs-12 p-b-20 ">
+                            <button class="btn btn-lg btn-success " [disabled]="processing" type="submit " (click)="onSubmit()">                       
+                                    <img *ngIf="processing" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                SUBMIT
+                            </button>
+                        </div>
+                    </div>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>

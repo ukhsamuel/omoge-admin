@@ -1,0 +1,25 @@
+
+.invalid-feedback {
+    color: red !important;
+    display: block;
+    padding-left: 5%;
+}
+
+.upload_container{
+	margin-top: 40px;
+}
+
+.success-message-div{
+	text-align: center;
+}
+
+.e0{
+	display: block;
+	font-weight: bold;
+	font-size: 4em;
+	color: green;
+}
+
+.e1{
+	display: block;
+}

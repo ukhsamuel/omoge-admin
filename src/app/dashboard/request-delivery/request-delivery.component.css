@@ -1,0 +1,35 @@
+
+.invalid-feedback {
+    color: red !important;
+    display: block;
+    padding-left: 5%;
+}
+
+agm-map {
+  height: 200px;
+}
+.sel_product_container{
+	padding: 4px;
+}
+.sel_product{
+	background-color: #fefefe;
+	border: 1px solid #f0f0f0;
+	padding: 8px;
+	border-radius: 5px;
+	margin-bottom: 10px;
+}
+.sel_product h3{
+	font-size: 1em;
+}
+
+.sel_product span{
+	font-weight: bold;
+	width: 30%;
+	display: inline-block;
+}
+
+.adding_container{
+	border: solid 1px #efefef;
+	padding: 8px;
+	border-radius: 5px;
+}

@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Request Pickup</h4>
+                <h6 class="card-subtitle">Fill the form below to request pickup</h6>
+			    <div class="col-sm-10">                  
+
+                    <ngb-alert *ngIf="responseMessage" [type]="messageType" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+
+                    <form [formGroup]="dataForm" class="form-horizontal m-t-25" id="signupform" (ngSubmit)="onSubmit()">
+                        <div class="form-group row">
+                            <div class="col-12" *ngIf="inputData.type == '2'">
+                                <label for="inlineFormCustomSelect">
+                                    Select Manufacturer (required)</label>
+                                <select formControlName="requested_to" (ngModelChange)="getManufacturerProducts(inputData.requested_to)"  [(ngModel)]="inputData.requested_to" [ngClass]="{ 'is-invalid': submitted && f.requested_to.errors }" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    <option selected>Choose Manufacturer...</option>
+                                    <option *ngFor="let manufacturer of manufacturers" value="{{manufacturer.created_by}}">{{ manufacturer.user.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-12 ">
+		                        <label for="inlineFormCustomSelect">Select Product (required)</label>
+		                        <select formControlName="product_id" [(ngModel)]="inputData.product_id" [ngClass]="{ 'is-invalid': submitted && f.product_id.errors }"  (ngModelChange)="loadProductBatches()" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+		                            <option selected>Choose product...</option>
+		                            <option *ngFor="let product of products" value="{{product.id}}">{{ product.name }}</option>
+		                        </select>
+                            </div>
+                            <div *ngIf="submitted && f.product_id.errors" class="invalid-feedback">
+                                <div *ngIf="f.product_id.errors.required">product is required</div>
+                            </div>
+                        </div>
+                        <!-- *ngIf="inputData.product_id" -->
+                        <div class="form-group row" >
+                            <div class="col-12 ">
+		                        <label for="inlineFormCustomSelect">
+			                        Select Product Batch (required)
+			                        	<img *ngIf="loadingBatches" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+			                    </label>
+		                        <select [attr.disabled]="!inputData.product_id?'':null" formControlName="batch_id" [(ngModel)]="inputData.batch_id" [ngClass]="{ 'is-invalid': submitted && f.batch_id.errors }" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+		                            <option selected>Choose batch...</option>
+		                            <option *ngFor="let batch of productsBatches" value="{{batch.id}}">{{ batch.batch_code }}</option>
+		                        </select>
+                            </div>
+                            <div *ngIf="submitted && f.batch_id.errors" class="invalid-feedback">
+                                <div *ngIf="f.batch_id.errors.required">batch id is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <div class="col-12 ">
+			                        <label class="block_label" for="d">Quantity (required)</label>
+                                    <input formControlName="quantity" [(ngModel)]="inputData.quantity" class="form-control form-control-lg" [ngClass]="{ 'is-invalid': submitted && f.quantity.errors }" type="number" required=" " placeholder="Input quantity">
+                                </div>
+                                <div *ngIf="submitted && f.quantity.errors" class="invalid-feedback">
+                                    <div *ngIf="f.quantity.errors.required">quantity is required</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+	                            <div class="col-12" *ngIf="inputData.type == '1'">
+			                        <label for="inlineFormCustomSelect">
+			                        	Select Middleman (required)</label>
+			                        <select formControlName="requested_to" [(ngModel)]="inputData.requested_to" [ngClass]="{ 'is-invalid': submitted && f.requested_to.errors }" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+			                            <option selected>Choose Middleman...</option>
+			                            <option *ngFor="let middleman of middlemen" value="{{middleman.assigned_to}}">{{ middleman.user.name }}</option>
+			                        </select>
+	                            </div>
+	                            <div *ngIf="submitted && f.requested_to.errors" class="invalid-feedback">
+	                                <div *ngIf="f.product_id.errors.required">this field is required</div>
+	                            </div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center ">
+                            <div class="col-xs-12 p-b-20 ">
+                                <button class="btn btn-lg btn-success " [disabled]="processing" type="submit ">                       
+                                        <img *ngIf="processing" class="pl-2" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                    SUBMIT
+                                </button>
+                            </div>
+                        </div>
+	                </form>
+	            </div>
+            </div>
+        </div>
+    </div>
+</div>

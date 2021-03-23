@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="col-sm-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title">Manage Profile</h4>
+              <div class="col-sm-12"> 
+                  <div class="col-lg-4 offset-lg-3">
+                      <div class="card">
+                          <div class="card-body text-center">
+                              <h4 class="card-title">User Info</h4>
+                              <div class="profile-pic m-b-20 m-t-20">
+                                <div class="row col-sm-12" style="margin-top: 20px">
+                                    <ngb-alert *ngIf="responseMessage" [type]="messageType" (close)="responseMessage = null">{{ responseMessage }}</ngb-alert>   
+                                </div>
+                                <img *ngIf="profile.photo" src="{{imgURL?imgURL: BASE_URL + 'uploads/profile/' + profile.photo }}" width="150" height="150" class="rounded-circle" alt="user">
+                                <img *ngIf="!profile.photo" src="{{imgURL?imgURL:'assets/images/users/1.jpg'}}" width="150" height="150" class="rounded-circle" alt="user">
+                                <h4 class="m-t-20 m-b-0">{{ profile.name }}</h4>
+                                  <a href="#">{{ profile.email }}</a>
+                              </div>
+                              <div class="row text-center m-t-40">                 
+                  
+                                  <div class="col-lg-12 upload_container">
+                                      <form>
+                                          <div class="input-group mb-3">
+                                              <div class="input-group-prepend">
+                                                  <span class="input-group-text">Upload photo</span>
+                                              </div>
+                                              <div class="custom-file">
+                                                  <input #file name="Company photo" accept="image/*"  (change)="preview(file.files)" type="file" class="custom-file-input" id="inputGroupFile01">
+                                                  <label class="custom-file-label" for="inputGroupFile01">Choose photo</label>
+                                                  <!-- <img [src]="imgURL" height="200" *ngIf="imgURL"> -->
+                                              </div>
+                                          </div>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+        </div>
+      </div>
+  </div>
+</div>
